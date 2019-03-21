@@ -50,12 +50,9 @@ router.get("/:id/posts", async (req, res) => {
 });
 
 router.post("/", capitalize, async (req, res) => {
-  console.log("POST");
   try {
     if (req.body.name !== "") {
-      console.log(req.body);
       const newUser = await userDb.insert(req.body);
-      console.log(newUser);
       res.status(201).json(newUser);
     } else {
       res.status(401).json({ message: "please submit with a name" });
@@ -64,6 +61,36 @@ router.post("/", capitalize, async (req, res) => {
     console.log(error);
     res.status(500).json({
       message: "Error adding the user"
+    });
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  try {
+    if (req.body.name !== "") {
+      const updated = await userDb.update(req.params.id, req.body);
+      res.status(203).json(updated);
+    } else {
+      res.status(401).json({ message: "please submit with a name" });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Error updating the user"
+    });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const deleted = await userDb.remove(req.params.id);
+    if (deleted) {
+      res.status(204).json(deleted);
+    } else {
+      res.status(404).json({ message: "user with that id does not exist" });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Error deleting the user"
     });
   }
 });
